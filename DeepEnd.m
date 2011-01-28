@@ -31,10 +31,14 @@ static void StartMotion()
 				CMAttitude *attitude = motion.attitude;
 				contentsRect.origin.x = cropLeft + attitude.roll * rollFactor;
 				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
+<<<<<<< HEAD
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
 				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
+=======
+				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
+>>>>>>> parent of 31f7627... Added support for Parallax
 			}
 		}];
 	}
