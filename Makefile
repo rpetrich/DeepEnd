@@ -1,6 +1,6 @@
 TWEAK_NAME = DeepEnd
 DeepEnd_OBJC_FILES = DeepEnd.m
-DeepEnd_FRAMEWORKS = Foundation UIKit CoreMotion
+DeepEnd_FRAMEWORKS = Foundation UIKit CoreMotion QuartzCore
 
 ADDITIONAL_CFLAGS = -std=c99
 
