@@ -31,26 +31,10 @@ static void StartMotion()
 				CMAttitude *attitude = motion.attitude;
 				contentsRect.origin.x = cropLeft + attitude.roll * rollFactor;
 				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
-<<<<<<< HEAD
-				if ([[[CHSharedInstance(SBUIController) wallpaperView] subviews] count] > 0) {
-					for (UIView *view in [[CHSharedInstance(SBUIController) wallpaperView] subviews]) {
-						
-						if ([[view subviews] count] > 0) {
-							for (UIView *v in [view subviews])
-								[v layer].contentsRect = contentsRect;
-						} else
-							[view layer].contentsRect = contentsRect;
-						
-					}
-					
-				}
-				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
-=======
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
 				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
->>>>>>> 3e9184b7dc09cf508840474f231edd1c97d17416
 			}
 		}];
 	}
