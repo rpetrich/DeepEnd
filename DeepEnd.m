@@ -30,7 +30,10 @@ static void StartMotion()
 				CMAttitude *attitude = motion.attitude;
 				contentsRect.origin.x = cropLeft + attitude.roll * rollFactor;
 				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
-				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
+				if ([[[[CHSharedInstance(SBUIController) wallpaperView] subviews] objectAtIndex:0] isKindOfClass:[UIScrollView class]])
+					[[[[[[CHSharedInstance(SBUIController) wallpaperView] subviews] objectAtIndex:0] subviews] objectAtIndex:0] layer].contentsRect = contentsRect;
+				else
+					[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
 			}
 		}];
 	}
@@ -62,6 +65,9 @@ CHOptimizedMethod(0, self, void, SBAwayController, activate)
 CHOptimizedMethod(0, self, void, SBAwayController, deactivate)
 {
 	CHSuper(0, SBAwayController, deactivate);
+	NSLog(@"DOING PREFS");
+	if ([[[[CHSharedInstance(SBUIController) wallpaperView] subviews] objectAtIndex:0] isKindOfClass:[UIScrollView class]])
+		NSLog(@"Please?");	
 	if ([[CHSharedInstance(SBUIController) wallpaperView] window])
 		StartMotion();
 }
