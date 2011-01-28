@@ -34,6 +34,7 @@ static void StartMotion()
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> parent of 14a3309... asdflkljk
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
@@ -49,6 +50,9 @@ static void StartMotion()
 >>>>>>> parent of 31f7627... Added support for Parallax
 =======
 >>>>>>> parent of 14a3309... asdflkljk
+=======
+				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
+>>>>>>> parent of 31f7627... Added support for Parallax
 			}
 		}];
 	}
