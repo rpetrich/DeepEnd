@@ -33,16 +33,22 @@ static void StartMotion()
 				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 14a3309... asdflkljk
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
 				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
+<<<<<<< HEAD
 =======
 				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
 >>>>>>> parent of 31f7627... Added support for Parallax
 =======
 				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
 >>>>>>> parent of 31f7627... Added support for Parallax
+=======
+>>>>>>> parent of 14a3309... asdflkljk
 			}
 		}];
 	}
