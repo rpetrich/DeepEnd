@@ -13,6 +13,7 @@ static double crop;
 static double cropLeft;
 static double rollFactor;
 static double pitchFactor;
+static CATransform3D scaleTransform;
 
 static void StartMotion()
 {
@@ -30,6 +31,7 @@ static void StartMotion()
 				CMAttitude *attitude = motion.attitude;
 				contentsRect.origin.x = cropLeft + attitude.roll * rollFactor;
 				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
+<<<<<<< HEAD
 				if ([[[CHSharedInstance(SBUIController) wallpaperView] subviews] count] > 0) {
 					for (UIView *view in [[CHSharedInstance(SBUIController) wallpaperView] subviews]) {
 						
@@ -43,6 +45,12 @@ static void StartMotion()
 					
 				}
 				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
+=======
+				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
+				layer.contentsRect = contentsRect;
+				CGSize size = layer.bounds.size;
+				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
+>>>>>>> 3e9184b7dc09cf508840474f231edd1c97d17416
 			}
 		}];
 	}
@@ -85,6 +93,7 @@ static void LoadSettings()
 	double depth = [[dict objectForKey:@"DEDepth"] doubleValue] ?: 0.33;
 	cropLeft = depth * 0.5;
 	crop = 1.0 - depth;
+	scaleTransform = CATransform3DMakeScale(1.0 / crop, 1.0 / crop, 1.0);
 	id temp = [dict objectForKey:@"DERollFactor"];
 	rollFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
 	temp = [dict objectForKey:@"DEPitchFactor"];
