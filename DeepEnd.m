@@ -18,7 +18,6 @@ static double crop;
 static double cropLeft;
 static double rollFactor;
 static double pitchFactor;
-static BOOL animate;
 static BOOL unlocked;
 static CGRect originalContentsRect;
 static CATransform3D scaleTransform;
@@ -32,8 +31,6 @@ static void StartMotion()
 		motionManager.deviceMotionUpdateInterval = 1.0 / 30.0;
 	}
 	
-	if (animate)
-		[CATransaction begin];
 	if (!motionManager.deviceMotionActive) {
 		[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *motion, NSError *error)
 		 {
@@ -53,8 +50,6 @@ static void StartMotion()
 			 }
 		 }];
 	}
-	if (animate)
-		[CATransaction commit];
 }
 
 static void StopMotion()
@@ -66,13 +61,9 @@ static void StopMotion()
 static void ResetAndStop()
 {
 	StopMotion();
-	if (animate)
-		[CATransaction begin];
 	CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 	layer.contentsRect = originalContentsRect;
 	layer.sublayerTransform = CATransform3DIdentity;
-	if (animate)
-		[CATransaction commit];
 }	
 
 CHOptimizedMethod(0, super, void, SBWallpaperView, didMoveToWindow)
@@ -152,7 +143,7 @@ CHOptimizedMethod(0, self, void, UIAlertView, show)
 CHOptimizedMethod(1, self, void, UIModalView, popupAlertAnimated, BOOL, animated)
 {
 	CHSuper(1, UIModalView, popupAlertAnimated, animated);
-	if (animated)
+	if (unlocked)
 		ResetAndStop();
 }
 
@@ -168,7 +159,6 @@ static void LoadSettings()
 	rollFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
 	temp = [dict objectForKey:@"DEPitchFactor"];
 	pitchFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
-	animate = [dict objectForKey:@"DEAnimate"] ? [[dict objectForKey:@"DEAnimate"] boolValue] : YES;
 	[dict release];
 }
 
