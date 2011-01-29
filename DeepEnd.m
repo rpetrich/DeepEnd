@@ -36,7 +36,8 @@ static void StartMotion()
 				 contentsRect.size.width = crop;
 				 contentsRect.size.height = crop;
 				 CMAttitude *attitude = motion.attitude;
-				 contentsRect.origin.x = cropLeft + (((M_PI - abs(attitude.roll))/M_PI)*attitude.roll + ((M_PI - abs(attitude.yaw))/(M_PI/2))*attitude.yaw) * rollFactor;
+					 // NSLog(@"AHH %f, %f, %f", attitude.yaw/M_PI, attitude.roll/M_PI, attitude.pitch/M_PI);
+				 contentsRect.origin.x = cropLeft + (0.1f + attitude.yaw+attitude.roll) * rollFactor;
 				 contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
 				 CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				 layer.contentsRect = contentsRect;
