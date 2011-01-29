@@ -35,6 +35,8 @@ static void StartMotion()
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
 				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (cropLeft - contentsRect.origin.x) * size.width, (cropLeft - contentsRect.origin.y) * size.height, 0);
+				if (!layer.masksToBounds)
+					layer.masksToBounds = YES;
 			}
 		}];
 	}
