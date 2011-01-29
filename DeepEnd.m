@@ -7,12 +7,14 @@ CHDeclareClass(SBUIController);
 
 CHDeclareClass(SBWallpaperView);
 CHDeclareClass(SBAwayController);
+CHDeclareClass(SBAppSwitcherController);
 
 static CMMotionManager *motionManager;
 static double crop;
 static double cropLeft;
 static double rollFactor;
 static double pitchFactor;
+static CGRect originalContentsRect = nil;
 static CATransform3D scaleTransform;
 
 static void StartMotion()
@@ -34,7 +36,8 @@ static void StartMotion()
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
-				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
+				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, -((contentsRect.origin.x - cropLeft) * size.width), -((contentsRect.origin.y - cropLeft) * size.height), 0);
+				[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = contentsRect;
 			}
 		}];
 	}
@@ -66,8 +69,19 @@ CHOptimizedMethod(0, self, void, SBAwayController, activate)
 CHOptimizedMethod(0, self, void, SBAwayController, deactivate)
 {
 	CHSuper(0, SBAwayController, deactivate);
-	if ([[CHSharedInstance(SBUIController) wallpaperView] window])
+	if ([[CHSharedInstance(SBUIController) wallpaperView] window]) {
+		if (!originalContentsRect)
+			originalContentsRect = [[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect;
 		StartMotion();
+	}
+}
+
+CHOptimizedMethod(0, self, void, SBAppSwitcherController, viewWillAppear)
+{
+	StopMotion();
+	[[CHSharedInstance(SBUIController) wallpaperView] layer].contentsRect = originalContentsRect;
+	
+	CHSuper(0,SBAppSwitcherController, viewWillAppear);
 }
 
 static void LoadSettings()
@@ -92,6 +106,8 @@ CHConstructor {
 	CHLoadLateClass(SBAwayController);
 	CHHook(0, SBAwayController, activate);
 	CHHook(0, SBAwayController, deactivate);
+	CHLoadLateClass(SBAppSwitcherController);
+	CHHook(0, SBAppSwitcherController, viewWillAppear);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (void *)LoadSettings, CFSTR("com.rpetrich.deepend.settingschanged"), NULL, CFNotificationSuspensionBehaviorCoalesce);
 	LoadSettings();
 }
