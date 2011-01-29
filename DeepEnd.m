@@ -34,7 +34,7 @@ static void StartMotion()
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
-				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (contentsRect.origin.x - cropLeft) * size.width, (contentsRect.origin.y - cropLeft) * size.height, 0);
+				layer.sublayerTransform = CATransform3DTranslate(scaleTransform, (cropLeft - contentsRect.origin.x) * size.width, (cropLeft - contentsRect.origin.y) * size.height, 0);
 			}
 		}];
 	}
