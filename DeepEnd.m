@@ -10,17 +10,23 @@ CHDeclareClass(SBAwayController);
 CHDeclareClass(SBAppSwitcherController);
 CHDeclareClass(SBAlertItemsController);
 
+CHDeclareClass(UIModalView);
+CHDeclareClass(UIAlertView);
+
 static CMMotionManager *motionManager;
 static double crop;
 static double cropLeft;
 static double rollFactor;
 static double pitchFactor;
 static BOOL animate;
+static BOOL unlocked;
 static CGRect originalContentsRect;
 static CATransform3D scaleTransform;
 
 static void StartMotion()
 {
+	if (![[CHSharedInstance(SBUIController) wallpaperView] window])
+		return;
 	if (!motionManager) {
 		motionManager = [[CMMotionManager alloc] init];
 		motionManager.deviceMotionUpdateInterval = 1.0 / 30.0;
@@ -36,7 +42,6 @@ static void StartMotion()
 				 contentsRect.size.width = crop;
 				 contentsRect.size.height = crop;
 				 CMAttitude *attitude = motion.attitude;
-					 // NSLog(@"AHH %f, %f, %f", attitude.yaw/M_PI, attitude.roll/M_PI, attitude.pitch/M_PI);
 				 contentsRect.origin.x = cropLeft + (0.1f + attitude.yaw+attitude.roll) * rollFactor;
 				 contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
 				 CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
@@ -72,27 +77,25 @@ static void ResetAndStop()
 
 CHOptimizedMethod(0, super, void, SBWallpaperView, didMoveToWindow)
 {
-	if (self == [CHSharedInstance(SBUIController) wallpaperView]) {
-		if (self.window)
-			StartMotion();
-		else
-			ResetAndStop();
-	}
+	if (self == [CHSharedInstance(SBUIController) wallpaperView])
+		StartMotion();
+	else
+		ResetAndStop();
 	CHSuper(0, SBWallpaperView, didMoveToWindow);
 }
 
 CHOptimizedMethod(0, self, void, SBAwayController, activate)
 {
+	unlocked = NO;
 	ResetAndStop();
 	CHSuper(0, SBAwayController, activate);
 }
 
 CHOptimizedMethod(0, self, void, SBAwayController, deactivate)
 {
+	unlocked = YES;
 	CHSuper(0, SBAwayController, deactivate);
-	if ([[CHSharedInstance(SBUIController) wallpaperView] window]) {
-		StartMotion();
-	}
+	StartMotion();
 }
 
 CHOptimizedMethod(0, self, void, SBUIController, finishLaunching)
@@ -125,6 +128,34 @@ CHOptimizedMethod(1, self, void, SBAlertItemsController, deactivateAlertItem, id
 	CHSuper(1, SBAlertItemsController, deactivateAlertItem, item);
 }
 
+CHOptimizedMethod(1, self, void, UIAlertView, dismissAnimated, BOOL, animated)
+{
+	CHSuper(1, UIAlertView, dismissAnimated, animated);
+	if (unlocked)
+		StartMotion();
+}
+
+CHOptimizedMethod(1, self, void, UIModalView, dismissAnimated, BOOL, animated)
+{
+	CHSuper(1, UIModalView, dismissAnimated, animated);
+	if (unlocked)
+		StartMotion();
+}
+
+CHOptimizedMethod(0, self, void, UIAlertView, show)
+{
+	CHSuper(0, UIAlertView, show);
+	if (unlocked)
+		ResetAndStop();
+}
+
+CHOptimizedMethod(1, self, void, UIModalView, popupAlertAnimated, BOOL, animated)
+{
+	CHSuper(1, UIModalView, popupAlertAnimated, animated);
+	if (animated)
+		ResetAndStop();
+}
+
 static void LoadSettings()
 {
 	CHAutoreleasePoolForScope();
@@ -155,6 +186,12 @@ CHConstructor {
 	CHLoadLateClass(SBAlertItemsController);
 	CHHook(1, SBAlertItemsController, activateAlertItem);
 	CHHook(1, SBAlertItemsController, deactivateAlertItem);
+	CHLoadLateClass(UIModalView);
+	CHHook(1, UIModalView, popupAlertAnimated);
+	CHHook(1, UIModalView, dismissAnimated);
+	CHLoadLateClass(UIAlertView);
+	CHHook(1, UIAlertView, dismissAnimated);
+	CHHook(0, UIAlertView, show);
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (void *)LoadSettings, CFSTR("com.rpetrich.deepend.settingschanged"), NULL, CFNotificationSuspensionBehaviorCoalesce);
 	LoadSettings();
 }
