@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>title</key>
-	<string>DeepEnd</string>
 	<key>entry</key>
 	<dict>
 		<key>cell</key>
@@ -81,6 +79,28 @@
 			<key>PostNotification</key>
 			<string>com.rpetrich.deepend.settingschanged</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Display</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.rpetrich.deepend</string>
+			<key>key</key>
+			<string>DEAnimate</string>
+			<key>label</key>
+			<string>Animate</string>
+			<key>PostNotification</key>
+			<string>com.rpetrich.deepend.settingschanged</string>
+		</dict>
 	</array>
+	<key>title</key>
+	<string>DeepEnd</string>
 </dict>
 </plist>
