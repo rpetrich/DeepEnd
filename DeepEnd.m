@@ -29,8 +29,16 @@ static void StartMotion()
 				contentsRect.size.width = crop;
 				contentsRect.size.height = crop;
 				CMAttitude *attitude = motion.attitude;
-				contentsRect.origin.x = cropLeft + attitude.roll * rollFactor;
-				contentsRect.origin.y = cropLeft + attitude.pitch * pitchFactor;
+				double pitch = attitude.pitch;
+				double rollBlend = fabs(pitch) * ((2.0 / M_PI) * 1.5);
+				if (rollBlend < 0.25)
+					rollBlend = rollFactor;
+				else if (rollBlend > 1.25)
+					rollBlend = 0.0;
+				else
+					rollBlend = (1.25 - rollBlend) * rollFactor;
+				contentsRect.origin.x = cropLeft + attitude.roll * rollBlend;
+				contentsRect.origin.y = cropLeft + pitch * pitchFactor;
 				CALayer *layer = [[CHSharedInstance(SBUIController) wallpaperView] layer];
 				layer.contentsRect = contentsRect;
 				CGSize size = layer.bounds.size;
