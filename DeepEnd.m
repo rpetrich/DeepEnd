@@ -19,7 +19,7 @@ static void StartMotion()
 {
 	if (!motionManager) {
 		motionManager = [[CMMotionManager alloc] init];
-		motionManager.deviceMotionUpdateInterval = 1.0 / 30.0;
+		motionManager.deviceMotionUpdateInterval = 1.0 / 20.0;
 	}
 	if (!motionManager.deviceMotionActive) {
 		[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *motion, NSError *error)
