@@ -2,7 +2,7 @@ Package: com.rpetrich.deepend
 Priority: optional
 Section: Tweaks
 Architecture: iphoneos-arm
-Version: 0.1
+Version: 0.2
 Description: Dive into SpringBoard!
 	A simple tweak that shifts the wallpaper based on the device orientation
 Name: DeepEnd
