@@ -14,9 +14,12 @@ static double cropLeft;
 static double rollFactor;
 static double pitchFactor;
 static CATransform3D scaleTransform;
+static BOOL enabled;
 
 static void StartMotion()
 {
+	if (!enabled)
+		return;
 	if (!motionManager) {
 		motionManager = [[CMMotionManager alloc] init];
 		motionManager.deviceMotionUpdateInterval = 1.0 / 20.0;
@@ -84,14 +87,22 @@ static void LoadSettings()
 {
 	CHAutoreleasePoolForScope();
 	NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.rpetrich.deepend.plist"];
-	double depth = [[dict objectForKey:@"DEDepth"] doubleValue] ?: 0.33;
-	cropLeft = depth * 0.5;
-	crop = 1.0 - depth;
-	scaleTransform = CATransform3DMakeScale(1.0 / crop, 1.0 / crop, 1.0);
-	id temp = [dict objectForKey:@"DERollFactor"];
-	rollFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
-	temp = [dict objectForKey:@"DEPitchFactor"];
-	pitchFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
+	id temp = [dict objectForKey:@"DEEnabled"];
+	enabled = !temp || [temp boolValue];
+	if (enabled) {
+		double depth = [[dict objectForKey:@"DEDepth"] doubleValue] ?: 0.33;
+		cropLeft = depth * 0.5;
+		crop = 1.0 - depth;
+		scaleTransform = CATransform3DMakeScale(1.0 / crop, 1.0 / crop, 1.0);
+		temp = [dict objectForKey:@"DERollFactor"];
+		rollFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
+		temp = [dict objectForKey:@"DEPitchFactor"];
+		pitchFactor = (temp ? [temp doubleValue] : 1.0) * cropLeft * (1.0 / M_PI);
+	} else {
+		StopMotion();
+		[motionManager release];
+		motionManager = nil;
+	}
 	[dict release];
 }
 
